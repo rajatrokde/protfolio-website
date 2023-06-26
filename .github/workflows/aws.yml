@@ -34,4 +34,4 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i RAJ.pem ubuntu@${{ steps.get-ec2-ip.outputs.ec2_ip }} "cd /var/www/html && git pull"
+        ssh -o StrictHostKeyChecking=no -i .github/workflows/RAJ.pem ubuntu@${{ steps.get-ec2-ip.outputs.ec2_ip }} "cd /var/www/html && git pull"
