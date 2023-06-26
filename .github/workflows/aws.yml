@@ -22,4 +22,4 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -i <path-to-ec2-key-pair> <ec2-username>@<ec2-instance-ip> "cd /var/www/html && git pull"
+        ssh -i C:\Users\Asus\Downloads\RAJ.pem ec2-username@<ec2-instance-ip> "cd /var/www/html && git pull"
