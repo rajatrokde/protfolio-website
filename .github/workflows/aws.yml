@@ -18,8 +18,20 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: <your-aws-region>
+
+    - name: Create EC2 instance
+      id: create-ec2
+      run: |
+        instance=$(aws ec2 run-instances --image-id ami-0261755bbcb8c4a84 --instance-type t2.micro --subnet-id 0bdeed4139e00f82f --security-group-ids sg-0ba21eab4b79e3dbe --query 'Instances[0].InstanceId' --output text)
+        echo "::set-output name=instance_id::$instance"
+
+    - name: Retrieve EC2 instance IP
+      id: get-ec2-ip
+      run: |
+        ip=$(aws ec2 describe-instances --instance-ids ${{ steps.create-ec2.outputs.instance_id }} --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+        echo "::set-output name=ec2_ip::$ip"
 
     - name: Deploy to EC2
       run: |
-        ssh -i C:\Users\Asus\Downloads\RAJ.pem ec2-username@<ec2-instance-ip> "cd /var/www/html && git pull"
+        ssh -o StrictHostKeyChecking=no -i C:\Users\Asus\Downloads\RAJ.pem ubuntu@${{ steps.get-ec2-ip.outputs.ec2_ip }} "cd /var/www/html && git pull"
